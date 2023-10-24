@@ -39,9 +39,13 @@ public class RestAssuredExercises4Test {
     public void getAccountsForCustomer12212AsXml_checkIdOfFirstAccount_shouldBe12345() {
 
         given().
-            spec(requestSpec).
+                spec(requestSpec).
         when().
-        then();
+                get(" /xml/customer/12212/accounts").
+        then().
+                assertThat().
+                log().all().
+                body("accounts.account[0].id", equalTo("12345"));
     }
 
     /*******************************************************
@@ -60,9 +64,13 @@ public class RestAssuredExercises4Test {
     public void getAccountsForCustomer12212AsXml_checkBalanceOfThirdAccount_shouldBe4321() {
 
         given().
-            spec(requestSpec).
+                spec(requestSpec).
         when().
-        then();
+                get(" /xml/customer/12212/accounts").
+        then().
+                assertThat().
+                log().all().
+                body("accounts.account[2].balance", equalTo("43.21"));
     }
 
     /*******************************************************
@@ -80,9 +88,13 @@ public class RestAssuredExercises4Test {
     public void getAccountsForCustomer12212AsXml_checkNumberOfCheckingAccounts_shouldBe3() {
 
         given().
-            spec(requestSpec).
+                spec(requestSpec).
         when().
-        then();
+                get(" /xml/customer/12212/accounts").
+        then().
+                assertThat().
+                log().all().
+                body("accounts.account.findAll{it.type=='checking'}.size()", equalTo(3));
     }
 
 
@@ -102,8 +114,12 @@ public class RestAssuredExercises4Test {
     public void getAccountsForCustomer12212AsXml_checkNumberOfAccountIdsStartingWith5_shouldBe2() {
 
         given().
-            spec(requestSpec).
+                spec(requestSpec).
         when().
-        then();
+                get(" /xml/customer/12212/accounts").
+        then().
+                assertThat().
+                log().all().
+                body("accounts.account.id.grep(~/5.*/).size()", equalTo(2));
     }
 }

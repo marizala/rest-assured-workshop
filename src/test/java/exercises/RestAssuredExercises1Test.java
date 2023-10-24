@@ -4,12 +4,13 @@ import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import groovyjarjarpicocli.CommandLine;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-@WireMockTest(httpPort = 9876)
+@WireMockTest(httpPort = 9876) // local machine port number
 public class RestAssuredExercises1Test {
 
 	private RequestSpecification requestSpec;
@@ -34,7 +35,8 @@ public class RestAssuredExercises1Test {
 		given().
 			spec(requestSpec).
 		when().
-		then();
+				get("/customer/12212").
+		then().assertThat().statusCode(200);
 	}
 
 	/*******************************************************
@@ -46,9 +48,10 @@ public class RestAssuredExercises1Test {
 	public void requestDataForCustomer99999_checkResponseCode_expect404() {
 
 		given().
-			spec(requestSpec).
+				spec(requestSpec).
 		when().
-		then();
+				get("/customer/99999").
+		then().assertThat().statusCode(404);
 	}
 
 	/*******************************************************
@@ -60,9 +63,10 @@ public class RestAssuredExercises1Test {
 	public void requestDataForCustomer12212_checkContentType_expectApplicationJson() {
 
 		given().
-			spec(requestSpec).
+				spec(requestSpec).
 		when().
-		then();
+				get("/customer/12212").
+		then().assertThat().contentType("application/json");
 	}
 
 	/***********************************************
@@ -78,9 +82,12 @@ public class RestAssuredExercises1Test {
 	public void requestDataForCustomer12212_checkFirstName_expectJohn() {
 
 		given().
-			spec(requestSpec).
+				spec(requestSpec).
 		when().
-		then();
+				get("/customer/12212").
+		then().
+				assertThat().
+				body("firstName", equalTo("John"));
 	}
 
 	/***********************************************
@@ -96,9 +103,12 @@ public class RestAssuredExercises1Test {
 	public void requestDataForCustomer12212_checkAddressCity_expectBeverlyHills() {
 
 		given().
-			spec(requestSpec).
+				spec(requestSpec).
 		when().
-		then();
+				get("/customer/12212").
+		then().
+				assertThat().
+				body("address.city", equalTo("Beverly Hills"));
 	}
 
 	/***********************************************
@@ -114,9 +124,12 @@ public class RestAssuredExercises1Test {
 	public void requestAccountsForCustomer12212_checkListOfAccountsIDs_expectContains12345() {
 
 		given().
-			spec(requestSpec).
+				spec(requestSpec).
 		when().
-		then();
+				get("/customer/12212/accounts").
+		then().
+				assertThat().
+				body("accounts.id", hasItem(12345)); // number, not String
 	}
 
 	/***********************************************
@@ -132,9 +145,13 @@ public class RestAssuredExercises1Test {
 	public void requestAccountsForCustomer12212_checkListOfAccountsIDs_expectDoesNotContain99999() {
 
 		given().
-			spec(requestSpec).
+				spec(requestSpec).
+				pathParam("customerId", 12212).
 		when().
-		then();
+				get("/customer/{customerId}/accounts").
+		then().
+				assertThat().
+				body("accounts.id", not(hasItem(9999))); // number, not String
 	}
 
 	/***********************************************
@@ -150,8 +167,12 @@ public class RestAssuredExercises1Test {
 	public void requestAccountsForCustomer12212_checkListOfAccountsIDs_expectSize3() {
 
 		given().
-			spec(requestSpec).
+				spec(requestSpec).
+				pathParam("customerId", 12212).
 		when().
-		then();
+				get("/customer/{customerId}/accounts").
+		then().
+				assertThat().
+				body("accounts.id", hasSize(3));
 	}
 }

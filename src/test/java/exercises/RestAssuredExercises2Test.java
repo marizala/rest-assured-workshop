@@ -47,42 +47,61 @@ public class RestAssuredExercises2Test {
      * respectively, to extract the required response body elements
      ******************************************************/
 
+    @ParameterizedTest
+    @CsvSource({
+            "12212, John, Smith",
+            "12323, Susan, Holmes",
+            "14545, Anna, Grant"
+    })
+    public void requestDataForCustomer_checkNames(int custId, String fName, String lName) {
+
+        given().
+                spec(requestSpec).
+                pathParam("custId", custId).
+        when().
+                get("/customer/{custId}").
+        then().
+                assertThat().
+                body("firstName", equalTo(fName)).
+                body("lastName", equalTo(lName));
+    }
+
     @Test
     public void requestDataForCustomer12212_checkNames_expectJohnSmith() {
 
         given().
-            spec(requestSpec).
+                spec(requestSpec).
         when().
-            get("/customer/12212").
+                get("/customer/12212").
         then().
-            assertThat().
-            body("firstName", equalTo("John")).
-            body("lastName", equalTo("Smith"));
+                assertThat().
+                body("firstName", equalTo("John")).
+                body("lastName", equalTo("Smith"));
     }
 
     @Test
     public void requestDataForCustomer12323_checkNames_expectSusanHolmes() {
 
         given().
-            spec(requestSpec).
+                spec(requestSpec).
         when().
-            get("/customer/12323").
+                get("/customer/12323").
         then().
-            assertThat().
-            body("firstName", equalTo("Susan")).
-            body("lastName", equalTo("Holmes"));
+                assertThat().
+                body("firstName", equalTo("Susan")).
+                body("lastName", equalTo("Holmes"));
     }
 
     @Test
     public void requestDataForCustomer14545_checkNames_expectAnnaGrant() {
 
         given().
-            spec(requestSpec).
+                spec(requestSpec).
         when().
-            get("/customer/14545").
+                get("/customer/14545").
         then().
-            assertThat().
-            body("firstName", equalTo("Anna")).
-            body("lastName", equalTo("Grant"));
+                assertThat().
+                body("firstName", equalTo("Anna")).
+                body("lastName", equalTo("Grant"));
     }
 }
